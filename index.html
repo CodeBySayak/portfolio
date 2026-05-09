@@ -48,10 +48,47 @@
         .section-padding {
             padding: 6rem 1rem;
         }
+
+        /* Preloader Styles */
+        #preloader {
+            position: fixed;
+            inset: 0;
+            background-color: #0a0a0a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
+        }
+
+        #preloader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-letter {
+            font-size: 12rem;
+            font-weight: 900;
+            color: #3b82f6;
+            text-shadow: 0 0 40px rgba(59, 130, 246, 0.4);
+            letter-spacing: -0.05em;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.05s ease-in-out;
+        }
+
+        /* Prevent scrolling when preloader is active */
+        body.loading {
+            overflow: hidden;
+        }
     </style>
 </head>
 
-<body class="selection:bg-primary/20 selection:text-primary">
+<body class="selection:bg-primary/20 selection:text-primary loading">
+
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="loader-letter" id="loader-letter">A</div>
+    </div>
 
     <!-- Navbar -->
     <nav class="fixed top-0 left-0 right-0 z-50 glass border-b border-white/5 py-4">
@@ -558,6 +595,31 @@
             <p class="text-gray-500 text-xs">&copy; 2026 Sayak Ghosh. All rights reserved.</p>
         </div>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const preloader = document.getElementById('preloader');
+            const loaderLetter = document.getElementById('loader-letter');
+            const body = document.body;
+            
+            const letters = "ABCDEFGHIJKLMNOPQRS".split("");
+            let currentIndex = 0;
+
+            const interval = setInterval(() => {
+                if (currentIndex < letters.length) {
+                    loaderLetter.textContent = letters[currentIndex];
+                    // Add a slight random shift for a "glitchy" premium feel
+                    const randomScale = 0.95 + Math.random() * 0.1;
+                    loaderLetter.style.transform = `scale(${randomScale})`;
+                    currentIndex++;
+                } else {
+                    clearInterval(interval);
+                    preloader.classList.add('hidden');
+                    body.classList.remove('loading');
+                }
+            }, 80); // 80ms for a fast but observable pace
+        });
+    </script>
 
 </body>
 
